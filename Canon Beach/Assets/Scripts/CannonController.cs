@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CannonController : MonoBehaviour
@@ -11,6 +12,7 @@ public class CannonController : MonoBehaviour
 
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float projectileForce = 30f;
+    [SerializeField] private float fireCooldown = 1;
 
     [SerializeField] private float aimSpeed = 10;
     [SerializeField] private float aimRotationMin = -10;
@@ -24,6 +26,8 @@ public class CannonController : MonoBehaviour
     private Vector2 aimRotation = Vector2.zero;
     private Vector2 turnRotation;
     private Vector2 wheelRotation = Vector2.zero;
+    private float currentFireTimer;
+    private bool canFire;
 
     private void Awake()
     {
@@ -35,6 +39,8 @@ public class CannonController : MonoBehaviour
         turnRotation = transform.localEulerAngles;
         turnRotationMin += turnRotation.y;
         turnRotationMax += turnRotation.y;
+
+        currentFireTimer = fireCooldown;
     }
 
     private void OnEnable()
@@ -53,6 +59,14 @@ public class CannonController : MonoBehaviour
         Vector2 move = simpleControls.gameplay.move.ReadValue<Vector2>();
         Aim(move.y);
         Turn(move.x);
+
+        if (canFire) return;
+
+        currentFireTimer -= Time.deltaTime;
+        if (currentFireTimer <= 0)
+        {
+            canFire = true;
+        }
     }
 
     private void Aim(float aimDirection)
@@ -83,8 +97,14 @@ public class CannonController : MonoBehaviour
 
     private void Fire()
     {
-        var cannonBall = Instantiate(projectilePrefab, barrelSpawnPoint.position, barrelSpawnPoint.rotation);
-        Rigidbody rigidBody = cannonBall.GetComponent<Rigidbody>();
-        rigidBody.AddForce(cannonBall.transform.forward * projectileForce, ForceMode.Impulse);
+        if (canFire)
+        {
+            var cannonBall = Instantiate(projectilePrefab, barrelSpawnPoint.position, barrelSpawnPoint.rotation);
+            Rigidbody rigidBody = cannonBall.GetComponent<Rigidbody>();
+            rigidBody.AddForce(cannonBall.transform.forward * projectileForce, ForceMode.Impulse);
+
+            currentFireTimer = fireCooldown;
+            canFire = false;
+        }
     }
 }

@@ -2,15 +2,21 @@ using UnityEngine;
 
 public class Shot : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private float lifeTime = 2.5f;
+
+    private float currentTimer;
+
+    private void Start()
     {
-        
+        currentTimer = lifeTime;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        currentTimer -= Time.deltaTime;
+        if (currentTimer <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }
