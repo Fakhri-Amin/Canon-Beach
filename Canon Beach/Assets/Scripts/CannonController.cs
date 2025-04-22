@@ -3,10 +3,14 @@ using UnityEngine;
 public class CannonController : MonoBehaviour
 {
     [SerializeField] private Transform barrel;
+    [SerializeField] private Transform barrelSpawnPoint;
     [SerializeField] private Transform wheelFrontRight;
     [SerializeField] private Transform wheelFrontLeft;
     [SerializeField] private Transform wheelRearRight;
     [SerializeField] private Transform wheelRearLeft;
+
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private float projectileForce = 30f;
 
     [SerializeField] private float aimSpeed = 10;
     [SerializeField] private float aimRotationMin = -10;
@@ -36,6 +40,7 @@ public class CannonController : MonoBehaviour
     private void OnEnable()
     {
         simpleControls.Enable();
+        simpleControls.gameplay.fire.performed += _ => { Fire(); };
     }
 
     void OnDisable()
@@ -74,5 +79,12 @@ public class CannonController : MonoBehaviour
         wheelRearRight.localEulerAngles = wheelRotation;
         wheelFrontLeft.localEulerAngles = -wheelRotation;
         wheelRearLeft.localEulerAngles = -wheelRotation;
+    }
+
+    private void Fire()
+    {
+        var cannonBall = Instantiate(projectilePrefab, barrelSpawnPoint.position, barrelSpawnPoint.rotation);
+        Rigidbody rigidBody = cannonBall.GetComponent<Rigidbody>();
+        rigidBody.AddForce(cannonBall.transform.forward * projectileForce, ForceMode.Impulse);
     }
 }
