@@ -18,6 +18,16 @@ public class ExplosiveShot : Shot
         {
             if (item.CompareTag("Target"))
             {
+                var ragdoll = item.GetComponent<Ragdoll>();
+                if (ragdoll)
+                {
+                    ragdoll.EnableRagdoll();
+                    foreach (var rigid in ragdoll.Rigidbodies)
+                    {
+                        rigid.AddExplosionForce(explosionForce, collision.contacts[0].point, upwardForce, upwardForce, ForceMode.Impulse);
+                    }
+                }
+
                 item.GetComponent<Rigidbody>().AddExplosionForce(explosionForce, collision.contacts[0].point, upwardForce, upwardForce, ForceMode.Impulse);
                 TargetUI.Instance.HandleTargetHit();
             }
