@@ -101,6 +101,7 @@ public class CannonController : MonoBehaviour
         {
             var cannonBall = Instantiate(projectilePrefab, barrelSpawnPoint.position, barrelSpawnPoint.rotation);
             Rigidbody rigidBody = cannonBall.GetComponent<Rigidbody>();
+            rigidBody.AddTorque(Random.insideUnitSphere.normalized * projectileForce, ForceMode.Impulse);
             rigidBody.AddForce(cannonBall.transform.forward * projectileForce, ForceMode.Impulse);
 
             currentFireTimer = fireCooldown;

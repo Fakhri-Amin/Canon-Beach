@@ -19,6 +19,7 @@ public class ExplosiveShot : Shot
             if (item.CompareTag("Target"))
             {
                 item.GetComponent<Rigidbody>().AddExplosionForce(explosionForce, collision.contacts[0].point, upwardForce, upwardForce, ForceMode.Impulse);
+                TargetUI.Instance.HandleTargetHit();
             }
         }
 
